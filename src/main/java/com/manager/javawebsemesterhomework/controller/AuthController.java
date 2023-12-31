@@ -11,13 +11,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.net.http.HttpResponse;
 
 /**
  * @Author: Aze
@@ -27,16 +25,17 @@ import java.net.http.HttpResponse;
 
 @Controller
 @Slf4j
-public class IndexController {
+public class AuthController {
 
     @GetMapping({"/", "/index"})
-    public String index() {
+    public String index(HttpSession httpSession, Model model) {
+        String username = (String) httpSession.getAttribute("username");
+        model.addAttribute("username", username);
         return "index";
     }
 
     @GetMapping("/login")
     public String login(Model model) {
-        model.addAttribute("isCaptchaFailure", false);
         return "login";
     }
     @Resource
@@ -61,7 +60,11 @@ public class IndexController {
             model.addAttribute("isCaptchaFailure", true);
             return Response.failure("验证码错误");
         }
-        return userService.authenUser(username, password);
+        Response response = userService.authenUser(username, password);
+        if (response.isSuccess()) {
+            httpSession.setAttribute("username", username);
+        }
+        return response;
     }
 
     @Resource
@@ -90,4 +93,42 @@ public class IndexController {
         response.getOutputStream().flush();
         response.getOutputStream().close();
     }
+
+    @GetMapping("/logout")
+    public String logout(HttpSession httpSession) {
+        httpSession.removeAttribute("username");
+        return "redirect:/login";
+    }
+
+    @GetMapping("/user/modify")
+    public String modify(HttpSession httpSession, Model model) {
+        String username = (String) httpSession.getAttribute("username");
+        model.addAttribute("username", username);
+        return "modify";
+    }
+
+    @PostMapping(value = "/user/modify", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public Response modify(String password, HttpSession session) {
+        log.info("newPassword: " + password);
+        String username = (String) session.getAttribute("username");
+        Response response = userService.modifyUser(username, password);
+        if(response.isSuccess()) {
+            session.removeAttribute("username");
+        }
+        return response;
+    }
+
+    @PostMapping(value = "/user/checkPassword", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public Response checkPassword(String password, HttpSession session) {
+        String username = (String) session.getAttribute("username");
+        log.info("username: " + username + ", password: " + password);
+        Response response = userService.authenUser(username, password);
+        if (response.isSuccess()) {
+            return Response.success("密码正确");
+        }
+        return Response.failure("旧密码错误");
+    }
+
 }

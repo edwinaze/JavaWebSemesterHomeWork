@@ -37,4 +37,17 @@ public class UserServiceImpl implements UserService {
         }
         return Response.failure("用户名不存在");
     }
+
+    @Override
+    public Response modifyUser(String username, String password) {
+        try {
+            User user = userRepository.findByUsername(username);
+            user.setPassword(password);
+            userRepository.save(user);
+            return Response.success("修改成功");
+        }
+        catch (Exception e) {
+            return Response.failure("修改失败");
+        }
+    }
 }
