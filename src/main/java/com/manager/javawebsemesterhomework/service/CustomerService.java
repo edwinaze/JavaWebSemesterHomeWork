@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface CustomerService {
     public PageCustomer findAllByPage(int current, int size);
+    public PageCustomer findAllByPage(int current, int size, String search_field, String keyword);
 
     public Response addCustomer(Customer customer);
     public Integer findAllCount();

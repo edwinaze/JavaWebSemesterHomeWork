@@ -36,6 +36,29 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    public PageCustomer findAllByPage(int current, int size, String search_field, String keyword) {
+        PageRequest request = PageRequest.of(current, size);
+        Page<Customer> page = null;
+        if(search_field.equals("id")) {
+            page = customerRepository.findAllByIdContaining(Integer.parseInt(keyword), request);
+        }
+        else if(search_field.equals("name")) {
+            page = customerRepository.findAllByNameLike("%" + keyword + "%", request);
+        }
+        else if(search_field.equals("address")) {
+            page = customerRepository.findAllByAddressLike("%" + keyword + "%", request);
+        }
+        else {
+            page = customerRepository.findAll(request);
+        }
+        return PageCustomer.builder()
+                .data(page.getContent())
+                .total(page.getTotalElements())
+                .totalPage(page.getTotalPages())
+                .build();
+    }
+
+    @Override
     public Response addCustomer(Customer customer) {
         try {
             customerRepository.save(customer);

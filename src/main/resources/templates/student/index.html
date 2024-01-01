@@ -111,21 +111,24 @@
                   <a class="btn btn-label btn-primary m-r-5" href="/student/add"><label><i class="mdi mdi-plus"></i></label> 新增</a>
                   <a class="btn btn-label btn-danger" href="#!"><label><i class="mdi mdi-window-close"></i></label> 删除</a>
                   </div>
-                  <form class=" col-lg-6" method="get" action="#!" role="form">
+                  <form class="search-bar col-lg-6" onsubmit="search()" role="form" style="max-width: 1000px;">
                     <div class="input-group">
                       <div class="input-group-btn">
-                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">姓名 <span class="caret"></span></button>
+                        <input type="hidden" name="search_field" id="search-field" value="name">
+                        <button class="btn btn-default dropdown-toggle" id="search-btn" data-toggle="dropdown" type="button" aria-haspopup="true" aria-expanded="false">姓名 <span class="caret"></span></button>
                         <ul class="dropdown-menu">
-                          <li><a href="#!">编号</a></li>
-                          <li><a href="#!">住址</a></li>
+                          <li> <a tabindex="-1" href="javascript:void(0)" data-field="name">姓名</a> </li>
+                          <li> <a tabindex="-1" href="javascript:void(0)" data-field="id">编号</a> </li>
+                          <li> <a tabindex="-1" href="javascript:void(0)" data-field="address">住址</a> </li>
                         </ul>
                       </div>
-                      <input type="text" class="form-control" placeholder="请输入关键词...">
+                      <label for="searchKeyword"></label><input id="searchKeyword" name="keyword" type="text" class="form-control" placeholder="请输入关键词...">
                       <span class="input-group-btn">
-                            <button class="btn btn-default" type="button"><i class="mdi mdi-magnify"></i></button>
+                            <button onclick="search()" id="searchButton" class="btn btn-default" type="button"><i class="mdi mdi-magnify"></i></button>
                       </span>
                     </div>
                   </form>
+
                 </div>
               </div>
               <div class="card-body">
@@ -178,23 +181,23 @@
                   <li class="disabled"><span>«</span></li>
                   <li th:each="num : ${pageList}" th:class="${num==currentPage?'active':''}">
                     <span th:text="${num}" th:if="${num == currentPage}"></span>
-                    <a th:href="'/student/index?current=' + ${num}" th:if="${num != currentPage}" th:text="${num}"></a>
+                    <a th:href="'/student/index?current=' + ${num} + '&search_field=' + ${search_field} + '&keyword=' + ${keyword}" th:if="${num != currentPage}" th:text="${num}"></a>
                   </li>
-                  <li><a th:href="'/student/index?current=' + ${currentPage + 1}">»</a></li>
+                  <li><a th:href="'/student/index?current=' + ${currentPage + 1} + '&search_field=' + ${search_field} + '&keyword=' + ${keyword}">»</a></li>
                 </ul>
                 <ul class="pagination" th:if="${currentPage != 1 && currentPage != totalPage}">
-                  <li><a th:href="'/student/index?current=' + ${currentPage - 1}">«</a></li>
+                  <li><a th:href="'/student/index?current=' + ${currentPage - 1} + '&search_field=' + ${search_field} + '&keyword=' + ${keyword}">«</a></li>
                   <li th:each="num : ${pageList}" th:class="${num==currentPage?'active':''}">
                     <span th:text="${num}" th:if="${num == currentPage}"></span>
-                    <a th:href="'/student/index?current=' + ${num}" th:if="${num != currentPage}" th:text="${num}"></a>
+                    <a th:href="'/student/index?current=' + ${num} + '&search_field=' + ${search_field} + '&keyword=' + ${keyword}" th:if="${num != currentPage}" th:text="${num}"></a>
                   </li>
-                  <li><a th:href="'/student/index?current=' + ${currentPage + 1}">»</a></li>
+                  <li><a th:href="'/student/index?current=' + ${currentPage + 1} + '&search_field=' + ${search_field} + '&keyword=' + ${keyword}">»</a></li>
                 </ul>
                 <ul class="pagination" th:if="${currentPage!= 1 && currentPage == totalPage}">
-                  <li ><a th:href="'/student/index?current=' + ${currentPage - 1}">«</a></li>
+                  <li ><a th:href="'/student/index?current=' + ${currentPage - 1} + '&search_field=' + ${search_field} + '&keyword=' + ${keyword}">«</a></li>
                   <li th:each="num : ${pageList}" th:class="${num==currentPage?'active':''}">
                     <span th:text="${num}" th:if="${num == currentPage}"></span>
-                    <a th:href="'/student/index?current=' + ${num}" th:if="${num != currentPage}" th:text="${num}"></a>
+                    <a th:href="'/student/index?current=' + ${num} + '&search_field=' + ${search_field} + '&keyword=' + ${keyword}" th:if="${num != currentPage}" th:text="${num}"></a>
                   </li>
                   <li class="disabled"><span>»</span></li>
                 </ul>
@@ -271,6 +274,24 @@
 <script type="text/javascript" src="/js/axios.min.js"></script>
 <script type="text/javascript" src="/js/lightyear.js"></script>
 <script src="/js/bootstrap-notify.min.js"></script>
+
+<script type="text/javascript">
+  $(function(){
+    $('.search-bar .dropdown-menu a').click(function() {
+      var field = $(this).data('field') || '';
+      $('#search-field').val(field);
+      $('#search-btn').html($(this).text() + ' <span class="caret"></span>');
+    });
+  });
+
+  function search() {
+    let field = $('#search-field').val()
+    let keyword = $('#searchKeyword').val()
+    window.location.href = "/student/index?search_field=" + field + "&keyword=" + keyword + "&current=1"
+  }
+
+
+</script>
 
 <script>
 
@@ -417,17 +438,6 @@
     });
 
   };
-
-//   单选下拉框js
-
-  $(function(){
-    $('.search-bar .dropdown-menu a').click(function() {
-      var field = $(this).data('field') || '';
-      $('#search-field').val(field);
-      $('#search-btn').html($(this).text() + ' <span class="caret"></span>');
-    });
-  });
-
 
 </script>
 </body>

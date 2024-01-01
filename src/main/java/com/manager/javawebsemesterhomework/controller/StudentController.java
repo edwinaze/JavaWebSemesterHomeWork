@@ -30,13 +30,27 @@ public class StudentController {
     CustomerService customerService;
 
     @GetMapping("/student/index")
-    public String indexNum(Model model,String current) {
-        log.info("current: " + current);
+    public String indexNum(Model model,String current, String search_field, String keyword) {
+//        log.info("current: " + current);
         if(StringUtils.isEmpty(current)) {
             current = "1";
         }
+        if(StringUtils.isEmpty(search_field)) {
+            search_field = "";
+        }
+        if(StringUtils.isEmpty(keyword)) {
+            keyword = "";
+        }
+        log.info("current: " + current + " search_field: " + search_field + " keyword: " + keyword);
         Integer currentNum = Integer.parseInt(current);
-        PageCustomer page = customerService.findAllByPage(currentNum - 1, 10);
+        PageCustomer page = null;
+
+        if(search_field.isEmpty() || keyword.isEmpty()) {
+            page = customerService.findAllByPage(currentNum - 1, 10);
+        }
+        else {
+            page = customerService.findAllByPage(currentNum - 1, 10, search_field, keyword.trim());
+        }
 
         List<Integer> pageList = new ArrayList<>();
         for(int i = 1; i <= page.getTotalPage(); i++) {
@@ -47,6 +61,8 @@ public class StudentController {
         model.addAttribute("totalPage", page.getTotalPage());
         model.addAttribute("total", page.getTotal());
         model.addAttribute("pageList", pageList);
+        model.addAttribute("search_field", search_field);
+        model.addAttribute("keyword", keyword);
 
         return "student/index";
     }
