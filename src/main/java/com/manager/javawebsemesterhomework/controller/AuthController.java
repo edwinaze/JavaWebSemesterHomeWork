@@ -2,6 +2,7 @@ package com.manager.javawebsemesterhomework.controller;
 
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import com.manager.javawebsemesterhomework.entity.VO.Response;
+import com.manager.javawebsemesterhomework.service.CustomerService;
 import com.manager.javawebsemesterhomework.service.UserService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletResponse;
@@ -27,10 +28,15 @@ import java.io.ByteArrayOutputStream;
 @Slf4j
 public class AuthController {
 
+    @Resource
+    CustomerService customerService;
     @GetMapping({"/", "/index"})
     public String index(HttpSession httpSession, Model model) {
+        Integer count = customerService.findAllCount();
         String username = (String) httpSession.getAttribute("username");
+        log.info("username: " + username);
         model.addAttribute("username", username);
+        model.addAttribute("count", count);
         return "index";
     }
 
@@ -38,6 +44,29 @@ public class AuthController {
     public String login(Model model) {
         return "login";
     }
+
+    @GetMapping("/register")
+    public String register(Model model) {
+        return "register";
+    }
+
+    @PostMapping("/register")
+    @ResponseBody
+    public Response register(String username, String password, String captcha,HttpSession session, Model model) {
+        log.info("username: " + username + ", password: " + password + ", captcha: " + captcha);
+        String sessionCaptcha = (String) session.getAttribute("captcha");
+        log.info("sessionCaptcha: " + sessionCaptcha);
+        if (captcha == null || !captcha.equals(sessionCaptcha)) {
+            model.addAttribute("isCaptchaFailure", true);
+            return Response.failure("验证码错误");
+        }
+        Response response = userService.registerUser(username, password);
+        if (response.isSuccess()) {
+            session.setAttribute("username", username);
+        }
+        return response;
+    }
+
     @Resource
     UserService userService;
 

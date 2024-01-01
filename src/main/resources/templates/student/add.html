@@ -28,8 +28,8 @@
         
         <nav class="sidebar-main">
           <ul class="nav nav-drawer">
-            <li class="nav-item active"> <a href="/index"><i class="mdi mdi-home"></i> 后台首页</a> </li>
-            <li class="nav-item nav-item-has-subnav open">
+            <li class="nav-item"> <a href="/index"><i class="mdi mdi-home"></i> 后台首页</a> </li>
+            <li class="nav-item nav-item-has-subnav open active">
               <a href="javascript:void(0)"><i class="mdi mdi-palette"></i> 学生管理</a>
               <ul class="nav nav-subnav">
                 <li> <a href="/student/index">学生信息维护</a> </li>
@@ -81,7 +81,7 @@
             <li class="dropdown dropdown-profile">
               <a href="javascript:void(0)" data-toggle="dropdown">
                 <span>欢迎管理员： </span>
-                <span><span th:text="#{username}"></span> <span class="caret"></span></span>
+                <span><span th:text="${username}"></span> <span class="caret"></span></span>
               </a>
               <ul class="dropdown-menu dropdown-menu-right">
                 <li> <a href="/user/modify"><i class="mdi mdi-lock-outline"></i> 修改密码</a> </li>
@@ -225,6 +225,28 @@
     })
   }
 
+</script>
+<script>
+  $('.logout').on('click',function(){
+    $.confirm({
+      title: '警告',
+      content: '您确定要退出吗？',
+      type: 'orange',
+      typeAnimated: false,
+      buttons: {
+        omg: {
+          text: '确认',
+          btnClass: 'btn-orange',
+          action: function(){
+            window.location.href="/logout";
+          }
+        },
+        close: {
+          text: '关闭',
+        }
+      }
+    });
+  });
 </script>
 </body>
 </html>

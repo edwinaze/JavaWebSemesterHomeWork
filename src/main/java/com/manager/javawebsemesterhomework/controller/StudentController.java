@@ -5,15 +5,16 @@ import com.manager.javawebsemesterhomework.entity.VO.PageCustomer;
 import com.manager.javawebsemesterhomework.entity.VO.Response;
 import com.manager.javawebsemesterhomework.service.CustomerService;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+import org.thymeleaf.util.ArrayUtils;
 import org.thymeleaf.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -30,7 +31,9 @@ public class StudentController {
     CustomerService customerService;
 
     @GetMapping("/student/index")
-    public String indexNum(Model model,String current, String search_field, String keyword) {
+    public String indexNum(Model model, String current, String search_field, String keyword, HttpSession session) {
+        String username = (String) session.getAttribute("username");
+
 //        log.info("current: " + current);
         if(StringUtils.isEmpty(current)) {
             current = "1";
@@ -63,12 +66,16 @@ public class StudentController {
         model.addAttribute("pageList", pageList);
         model.addAttribute("search_field", search_field);
         model.addAttribute("keyword", keyword);
+        model.addAttribute("username", username);
+        log.info("username" + username);
 
         return "student/index";
     }
 
     @GetMapping("/student/add")
-    public String add() {
+    public String add(HttpSession session, Model model) {
+        String username = (String) session.getAttribute("username");
+        model.addAttribute("username", username);
         return "student/add";
     }
     @PostMapping(value = "/student/add", produces = "application/json;charset=UTF-8")
@@ -81,6 +88,13 @@ public class StudentController {
     @ResponseBody
     public Response delete(Integer id) {
         return customerService.deleteCustomer(id);
+    }
+
+    @PostMapping(value = "/student/deleteAll", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public Response deleteAll(@RequestParam("ids[]") String[] ids) {
+        log.info("ids: " + Arrays.toString(ids));
+        return customerService.deleteAll(ids);
     }
 
     @PostMapping(value = "/student/find", produces = "application/json;charset=UTF-8")

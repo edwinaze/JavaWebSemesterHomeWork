@@ -11,6 +11,5 @@ import java.util.List;
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, Integer> {
     public Page<Customer> findAllByNameLike(String name, Pageable pageable);
-    public Page<Customer> findAllByIdContaining(Integer id, Pageable pageable);
     public Page<Customer> findAllByAddressLike(String address, Pageable pageable);
 }

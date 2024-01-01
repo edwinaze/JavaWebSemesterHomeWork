@@ -50,4 +50,18 @@ public class UserServiceImpl implements UserService {
             return Response.failure("修改失败");
         }
     }
+
+    @Override
+    public Response registerUser(String username, String password) {
+        try {
+            User user = new User();
+            user.setUsername(username);
+            user.setPassword(password);
+            userRepository.save(user);
+            return Response.success("注册成功");
+        }
+        catch (Exception e) {
+            return Response.failure("注册失败");
+        }
+    }
 }

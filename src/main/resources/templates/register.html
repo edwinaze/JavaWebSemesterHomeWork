@@ -4,7 +4,7 @@
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>登录页面 - XX管理系统</title>
+<title>注册页面 - XX管理系统</title>
 <link href="css/bootstrap.min.css" rel="stylesheet">
 <link href="css/materialdesignicons.min.css" rel="stylesheet">
 <link href="css/style.min.css" rel="stylesheet">
@@ -1125,72 +1125,85 @@ xm-select[size='mini'] .item--divided {
 </style>
 </head>
   
-<body style="background-color: #e1a8b3; color: #8b5454">
+<body style="background-color: #6c63c0; color: #22277a">
 <div class="login-box" >
-  <iframe class="login-left" src='https://my.spline.design/miniroomartcopy-fba1fa85669e48d4a6ec258fc8582d4f/' frameborder='0' width='100%' height='100%'></iframe>
-  <div class="login-right" style="background-color: #ffe6e6;margin-top: 5%;margin-right: 10%; border-radius: 5%">
+  <div class="left-login" style="background-color: #8982cd; border-radius: 5%;">
     <div class="logo text-center">
       <a href="#!"><img src="/images/logo-sidebar.png" alt="logo"></a>
     </div>
     <form id="form" data-parsley-validate="">
       <div class="form-group">
-        <label for="username" style="color: #8b5454; font-size: large">用户名</label>
+        <label for="username" style="color: #23203d; font-size: large">用户名</label>
 <!--        <input type="username" class="form-control" id="username" placeholder="请输入您的用户名" required="" data-parsley-trigger="change" data-parsley-remote data-parsley-remote-validator='username'>-->
-        <input type="username" class="form-control" id="username" placeholder="请输入您的用户名" required="" data-parsley-trigger="change" data-parsley-username="">
+        <input type="username" class="form-control" id="username" required="" data-parsley-trigger="change" data-parsley-username="">
       </div>
 
       <div class="form-group">
-        <label for="password" style="color: #8b5454; font-size: large">密码</label>
-        <input type="password" class="form-control" id="password" placeholder="请输入您的密码" data-parsley-trigger="change" required="">
+        <label for="password" style="color: #23203d; font-size: large">密码</label>
+        <input type="password" class="form-control" id="password" data-parsley-trigger="change" required="">
       </div>
 
       <div class="form-group">
-        <label for="captcha" style="color: #8b5454; font-size: large">验证码</label>
+        <label for="captcha" style="color: #23203d; font-size: large">验证码</label>
         <div class="row">
           <div class="col-xs-7">
-            <input type="text" name="captcha" id="captcha" class="form-control" placeholder="验证码" required="" data-parsley-trigger="change"  maxlength="4" minlength="4" >
+            <input type="text" name="captcha" id="captcha" class="form-control"  required="" data-parsley-trigger="change"  maxlength="4" minlength="4" >
           </div>
           <div class="col-xs-5" style="display: flex; justify-content: space-around;">
             <img src="/captcha" class="pull-left" style="cursor: pointer;" onclick="this.src=this.src+'?d='+Math.random();" title="点击刷新" alt="captcha">
-            <button class="btn btn-danger" type="reset">重置</button>
+            <button class="btn btn-purple" type="reset">重置</button>
           </div>
 <!--          <p th:if="#{isCaptchaFailure}"></p>-->
         </div>
       </div>
 
       <div class="form-group">
-          <input class="btn btn-danger btn-block" type="submit"  value="立即登录"/>
+          <input class="btn btn-purple btn-block" type="submit"  value="立即注册"/>
       </div>
       <div class="form-group">
-        <p>还没有账户？ <a href="/register">立即注册</a></p>
+        <p>已有账户？ <a href="/login">点击登录</a></p>
       </div>
-
       <footer class="text-center">
         <p class="m-b-0">Copyright © 2023 Aze. All right reserved</p>
       </footer>
     </form>
     <style>
-      a{
-        text-decoration: none;
-        color: #8b5454;
+      a {
+        color: #22277a;
       }
+
       a:hover {
-        text-decoration: none;
-        color: #ae8787 !important;
+        color: #ac9eff !important;
       }
 
       .form-control {
-        background-color: #f2dede;
+        background-color: #827acf;
+        color: #22277a;
+        border: 1px solid #6c63c0;
       }
 
       input.parsley-success{
-        color: #B94A48;
-        background-color: #F2DEDE;
-        border: 1px solid #EED3D7;
+        color: #22277a;
+        background-color: #827acf;
+        border: 1px solid #6c63c0;
       }
 
       input.parsley-success:focus {
-        border-color: #f96868 !important;
+        border-color: #6c63c0 !important;
+        -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px rgba(249, 104, 104, .6) !important;
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px rgba(249, 104, 104, .6) !important;
+      }
+      input.parsley-error{
+        color: #22277a;
+        background-color: #827acf;
+        border: 1px solid #6c63c0;
+      }
+      .parsley-errors-list {
+        color: #22277a;
+      }
+
+      input.parsley-error:focus {
+        border-color: #6c63c0 !important;
         -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px rgba(249, 104, 104, .6) !important;
         box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px rgba(249, 104, 104, .6) !important;
       }
@@ -1223,9 +1236,9 @@ xm-select[size='mini'] .item--divided {
                   async: false,
                   success: function(data) {
                     if(data.success)
-                      response = true;
-                    else
                       response = false;
+                    else
+                      response = true;
                   },
                   error: function() {
                     response = false;
@@ -1234,7 +1247,7 @@ xm-select[size='mini'] .item--divided {
                 return response;
               }, 32)
               .addMessage('en', 'username', 'The username already exists.')
-              .addMessage('zh-cn', 'username', '用户名不存在')
+              .addMessage('zh-cn', 'username', '用户名已存在')
 
       // window.parsley
               // .addAsyncValidator('username', function (xhr) {
@@ -1266,7 +1279,7 @@ xm-select[size='mini'] .item--divided {
         // 假设ajax提交操作
 
         // const axios = require('axios');
-        await axios.post('/login', data, {
+        await axios.post('/register', data, {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
           }}).then(function (response) {
@@ -1292,7 +1305,27 @@ xm-select[size='mini'] .item--divided {
     </script>
     
   </div>
+  <iframe class="right-login" src='https://my.spline.design/miniroommusiccopy-f69e1abf5e8373569fba76b9a32bd5a3/' frameborder='0' width='100%' height='100%'></iframe>
 </div>
+<style>
+  .left-login {
+    background-color: #827acf;
+    position: fixed;
+    top: 10%;
+    left: 13%;
+    padding: 80px;
+    z-index: 1000;
+    width: 700px;
+    height: 600px;
+    color: #22277a;
+  }
 
+  .right-login {
+    margin-left: 25%;
+    position: relative;
+    z-index: 999;
+  }
+
+</style>
 </body>
 </html>

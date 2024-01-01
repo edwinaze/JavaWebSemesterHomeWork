@@ -14,6 +14,7 @@ public interface CustomerService {
     public Integer findAllCount();
 
     public Response deleteCustomer(Integer id);
+    public Response deleteAll(String[] ids);
 
     public Response findCustomer(Integer id);
 

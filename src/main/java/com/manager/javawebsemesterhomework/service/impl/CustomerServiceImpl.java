@@ -39,16 +39,30 @@ public class CustomerServiceImpl implements CustomerService {
     public PageCustomer findAllByPage(int current, int size, String search_field, String keyword) {
         PageRequest request = PageRequest.of(current, size);
         Page<Customer> page = null;
-        if(search_field.equals("id")) {
-            page = customerRepository.findAllByIdContaining(Integer.parseInt(keyword), request);
-        }
-        else if(search_field.equals("name")) {
+        if(search_field.equals("name")) {
             page = customerRepository.findAllByNameLike("%" + keyword + "%", request);
         }
         else if(search_field.equals("address")) {
             page = customerRepository.findAllByAddressLike("%" + keyword + "%", request);
         }
-        else {
+        else if (search_field.equals("id")) {
+            if(customerRepository.findById(Integer.parseInt(keyword)).isPresent()) {
+                Customer customer = customerRepository.findById(Integer.parseInt(keyword)).get();
+                return PageCustomer.builder()
+                        .data(List.of(customer))
+                        .total(1L)
+                        .totalPage(1)
+                        .build();
+            }
+            else {
+                return PageCustomer.builder()
+                        .data(List.of())
+                        .total(0L)
+                        .totalPage(0)
+                        .build();
+            }
+        }
+        else{
             page = customerRepository.findAll(request);
         }
         return PageCustomer.builder()
@@ -84,6 +98,20 @@ public class CustomerServiceImpl implements CustomerService {
             return Response.failure("删除失败");
         }
     }
+
+    @Override
+    public Response deleteAll(String[] ids) {
+        try {
+            for(String id : ids) {
+                customerRepository.deleteById(Integer.valueOf(id));
+            }
+            return Response.success("删除成功");
+        }
+        catch (Exception e) {
+            return Response.failure("删除失败");
+        }
+    }
+
 
     @Override
     public Response findCustomer(Integer id) {

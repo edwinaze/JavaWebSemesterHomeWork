@@ -26,7 +26,7 @@ public class AuthorizationFilter implements Filter {
         String url = ((HttpServletRequest) servletRequest).getRequestURI();
 //        log.info("url: " + url);
 
-        if(!(url.equals("/login") || url.startsWith("/js") || url.startsWith("/css") || url.startsWith("/images") || url.startsWith("/fonts") || url.startsWith("/checkLogin") || url.startsWith("/captcha") )) {
+        if(!(url.equals("/login") || url.startsWith("/register") || url.startsWith("/js") || url.startsWith("/css") || url.startsWith("/images") || url.startsWith("/fonts") || url.startsWith("/checkLogin") || url.startsWith("/captcha") )) {
             String username = (String) ((HttpServletRequest) servletRequest).getSession().getAttribute("username");
             if (username == null) {
                 ((HttpServletResponse) servletResponse).sendRedirect("/login");

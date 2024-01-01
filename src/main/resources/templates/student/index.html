@@ -28,8 +28,8 @@
         
         <nav class="sidebar-main">
           <ul class="nav nav-drawer">
-            <li class="nav-item active"> <a href="/index"><i class="mdi mdi-home"></i> 后台首页</a> </li>
-            <li class="nav-item nav-item-has-subnav open">
+            <li class="nav-item "> <a href="/index"><i class="mdi mdi-home"></i> 后台首页</a> </li>
+            <li class="nav-item nav-item-has-subnav active open">
               <a href="javascript:void(0)"><i class="mdi mdi-palette"></i> 学生管理</a>
               <ul class="nav nav-subnav">
                 <li class="active"> <a href="/student/index">学生信息维护</a> </li>
@@ -81,7 +81,7 @@
             <li class="dropdown dropdown-profile">
               <a href="javascript:void(0)" data-toggle="dropdown">
                 <span>欢迎管理员： </span>
-                <span><span th:text="#{username}"></span> <span class="caret"></span></span>
+                <span><span th:text="${username}"></span> <span class="caret"></span></span>
               </a>
               <ul class="dropdown-menu dropdown-menu-right">
                 <li> <a href="/user/modify"><i class="mdi mdi-lock-outline"></i> 修改密码</a> </li>
@@ -109,7 +109,7 @@
                 <div class="toolbar-btn-action" style="display: flex; justify-content: space-between">
                   <div>
                   <a class="btn btn-label btn-primary m-r-5" href="/student/add"><label><i class="mdi mdi-plus"></i></label> 新增</a>
-                  <a class="btn btn-label btn-danger" href="#!"><label><i class="mdi mdi-window-close"></i></label> 删除</a>
+                  <a class="btn btn-label btn-danger" onclick="multiplyDelete()"><label><i class="mdi mdi-window-close"></i></label> 删除</a>
                   </div>
                   <form class="search-bar col-lg-6" onsubmit="search()" role="form" style="max-width: 1000px;">
                     <div class="input-group">
@@ -154,7 +154,7 @@
                     <tr th:each="customer : ${customerList}">
                       <td>
                         <label class="checkbox checkbox-primary">
-                          <input type="checkbox" name="ids[]" value="1"><span></span>
+                          <input type="checkbox" name="ids[]" th:value="${customer.getId()}"><span></span>
                         </label>
                       </td>
                       <td th:text="${customer.getId()}"></td>
@@ -172,12 +172,12 @@
                     </tbody>
                   </table>
                 </div>
-                <ul class="pagination" th:if="${currentPage == 1 && currentPage == totalPage}">
+                <ul class="pagination" th:if="${currentPage == 1 && currentPage >= totalPage}">
                   <li class="disabled"><span>«</span></li>
                   <li class="active"><span>1</span></li>
                   <li class="disabled"><span>»</span></li>
                 </ul>
-                <ul class="pagination" th:if="${currentPage == 1 && currentPage != totalPage}">
+                <ul class="pagination" th:if="${currentPage == 1 && currentPage != totalPage && currentPage <= totalPage}">
                   <li class="disabled"><span>«</span></li>
                   <li th:each="num : ${pageList}" th:class="${num==currentPage?'active':''}">
                     <span th:text="${num}" th:if="${num == currentPage}"></span>
@@ -185,7 +185,7 @@
                   </li>
                   <li><a th:href="'/student/index?current=' + ${currentPage + 1} + '&search_field=' + ${search_field} + '&keyword=' + ${keyword}">»</a></li>
                 </ul>
-                <ul class="pagination" th:if="${currentPage != 1 && currentPage != totalPage}">
+                <ul class="pagination" th:if="${currentPage != 1 && currentPage != totalPage && currentPage <= totalPage}">
                   <li><a th:href="'/student/index?current=' + ${currentPage - 1} + '&search_field=' + ${search_field} + '&keyword=' + ${keyword}">«</a></li>
                   <li th:each="num : ${pageList}" th:class="${num==currentPage?'active':''}">
                     <span th:text="${num}" th:if="${num == currentPage}"></span>
@@ -193,7 +193,7 @@
                   </li>
                   <li><a th:href="'/student/index?current=' + ${currentPage + 1} + '&search_field=' + ${search_field} + '&keyword=' + ${keyword}">»</a></li>
                 </ul>
-                <ul class="pagination" th:if="${currentPage!= 1 && currentPage == totalPage}">
+                <ul class="pagination" th:if="${currentPage!= 1 && currentPage >= totalPage}">
                   <li ><a th:href="'/student/index?current=' + ${currentPage - 1} + '&search_field=' + ${search_field} + '&keyword=' + ${keyword}">«</a></li>
                   <li th:each="num : ${pageList}" th:class="${num==currentPage?'active':''}">
                     <span th:text="${num}" th:if="${num == currentPage}"></span>
@@ -274,6 +274,73 @@
 <script type="text/javascript" src="/js/axios.min.js"></script>
 <script type="text/javascript" src="/js/lightyear.js"></script>
 <script src="/js/bootstrap-notify.min.js"></script>
+<!--批量删除-->
+<script>
+
+  function multiplyDelete() {
+    var checkedValues = $('input[type="checkbox"][name="ids[]"]:checked').map(function() {
+      return this.value;
+    }).get();
+    console.log(checkedValues)
+    if(checkedValues.length < 1) return false;
+    $.confirm({
+      title: '操作确认',
+      content: '确认删除该' + checkedValues.length + '条记录？',
+      type: 'red',
+      typeAnimated: true,
+      buttons: {
+        tryAgain: {
+          text: '确认',
+          btnClass: 'btn-red',
+          action: function(){
+            $.ajax("/student/deleteAll", {
+              data: {'ids': checkedValues},
+              type: 'POST',
+              dataType: 'json',
+              success: function (data) {
+                if(data.success)
+                  $.confirm({
+                    title: '提示',
+                    content: '删除成功',
+                    type: 'green',
+                    buttons: {
+                      ok: {
+                        text: '确定',
+                        btnClass: 'btn-primary',
+                        action: function(){
+                          window.location.reload();
+                        }
+                      }
+                    }
+                  });
+                else
+                  $.confirm({
+                    title: '提示',
+                    content: '删除失败',
+                    type: 'red',
+                    buttons: {
+                      ok: {
+                        text: '确定',
+                        btnClass: 'btn-primary',
+                        action: function(){
+                          window.location.reload();
+                        }
+                      }
+                    }
+                  });
+              },
+            })
+          }
+        },
+        close: {
+          text: '关闭'
+        }
+      }
+    });
+
+  }
+
+</script>
 
 <script type="text/javascript">
   $(function(){
@@ -439,6 +506,28 @@
 
   };
 
+</script>
+<script>
+  $('.logout').on('click',function(){
+    $.confirm({
+      title: '警告',
+      content: '您确定要退出吗？',
+      type: 'orange',
+      typeAnimated: false,
+      buttons: {
+        omg: {
+          text: '确认',
+          btnClass: 'btn-orange',
+          action: function(){
+            window.location.href="/logout";
+          }
+        },
+        close: {
+          text: '关闭',
+        }
+      }
+    });
+  });
 </script>
 </body>
 </html>
