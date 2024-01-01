@@ -1,5 +1,6 @@
 package com.manager.javawebsemesterhomework.entity.VO;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
@@ -8,10 +9,15 @@ import lombok.Data;
  * @Date: 2023/12/30 23:17
  */
 @Data
+@AllArgsConstructor
 public class Response<T>  {
     private boolean success;
     private String message;
     private T data;
+
+    public Response() {
+    }
+
 
     public static <T> Response<T> success(T data) {
         Response<T> response = new Response<>();

@@ -13,7 +13,7 @@ import org.hibernate.annotations.GeneratedColumn;
  */
 
 @Data
-@Table(name = "smbms_user")
+@Table(name = "user")
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -26,6 +26,4 @@ public class User {
     String username;
     @Column(name="password")
     String password;
-    @Column(name="name")
-    String name;
 }
